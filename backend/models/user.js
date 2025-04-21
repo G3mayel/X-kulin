@@ -31,15 +31,15 @@ const userSchema = new mongoose.Schema({
         minlength: 3,
         maxlength: 100,
     },
+    status: {
+        type: String,
+        enum: ['pending', 'approve', 'reject'],
+        default: 'active',
+    },
     role: {
         type: String,
         enum: ['siswa', 'guru', 'admin'],
         default: 'siswa',
-    },
-    status: {
-        type: String,
-        enum: ['pending', 'approved', 'rejected'],
-        default: 'pending',
     },
     password: {
         type: String,

@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { sendReminderEmail } from '../utils/send_email.js';
  
 import User from '../models/user.js';
 import { JWT_SECRET } from '../config/env.js';
@@ -9,7 +10,7 @@ export const signUp = async (req, res, next) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-        const { name, email, kelas, password } = req.body;
+        const { name, email, kelas, jurusan, role, password } = req.body;
 
         const existingUser = await User.findOne({ email});
         if (existingUser) {
@@ -21,10 +22,16 @@ export const signUp = async (req, res, next) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const newUsers = await User.create([{ name, email, kelas, password: hashedPassword }], { session });
+        const newUsers = await User.create([{ name, email, kelas, jurusan, role, password: hashedPassword, status: 'pending' }], { session });
 
         const token = jwt.sign({ userId: newUsers[0]._id }, JWT_SECRET, { expiresIn: '1h' });
+        const admin = await User.findOne({ role: 'admin' });
 
+        await sendReminderEmail({
+            to: admin.email,
+            user: newUsers[0],
+          })
+          
         await session.commitTransaction();
         session.endSession();
 
