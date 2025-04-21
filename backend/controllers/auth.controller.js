@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { sendReminderEmail } from '../utils/send_email.js';
  
-import User from '../models/user.js';
+import User from '../models/user.js';  
 import { JWT_SECRET } from '../config/env.js';
 
 export const signUp = async (req, res, next) => {

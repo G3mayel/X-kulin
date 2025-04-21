@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config/env.js';
 import User from '../models/user.js';
 
-const authorize = async (req, res, next) => {
+export const authorize = async (req, res, next) => {
     try {
        let token;
 
@@ -17,7 +17,7 @@ const authorize = async (req, res, next) => {
            });
        }
 
-       const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET);
 
        const user = await User.findById(decoded.userId);
 
@@ -38,4 +38,12 @@ const authorize = async (req, res, next) => {
     }
 }
 
-export default authorize;
+export const guruOnly = (req, res, next) => {
+    if (req.user.role !== 'guru') {
+        return res.status(403).json({
+            success: false,
+            message: 'Access denied. Only guru can access this route.'
+        });
+    }
+    next();
+};

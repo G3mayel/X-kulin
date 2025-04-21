@@ -5,6 +5,7 @@ import { PORT } from './config/env.js';
 import userRouter from './routes/user.routes.js';
 import authRouter from './routes/auth.routes.js';
 import connectToDatabase from './database/mongodb.js';
+import guruRouter from './routes/guru.routes.js';
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(cookieParser());
 
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/guru', guruRouter);
 
 app.get('/', (req, res) => {
     res.send('Welcome to the Ekskulin API');
